@@ -9,6 +9,10 @@
 
 #pragma once
 
+// ─── Vehicle ID (used as MQTT topic prefix: car/<id>/...) ───────────────────
+// Use a short, URL-safe identifier for your vehicle (no spaces)
+#define CONFIG_VEHICLE_ID   "my-car"
+
 // ─── SIM / LTE ──────────────────────────────────────────────────────────────
 #define CONFIG_SIM_APN      "internet"      // One.hu: "internet"
 #define CONFIG_SIM_USER     ""              // Usually empty for data SIMs

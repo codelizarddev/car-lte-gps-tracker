@@ -1,5 +1,6 @@
 # Car LTE GPS Tracker with Remote Relay Control
 
+[![CI](https://github.com/CodeLizardDev/car-lte-gps-tracker/actions/workflows/ci.yml/badge.svg)](https://github.com/CodeLizardDev/car-lte-gps-tracker/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Platform: ESP32](https://img.shields.io/badge/Platform-ESP32-blue.svg)](https://www.espressif.com/)
 [![Framework: ESP-IDF](https://img.shields.io/badge/Framework-ESP--IDF-red.svg)](https://docs.espressif.com/projects/esp-idf/)
@@ -188,11 +189,33 @@ Includes:
 
 ## Setup Guide
 
-1. [Hardware assembly](docs/setup/hardware-assembly.md)
+1. [Hardware assembly & BOM](hardware/bom/BOM.md)
 2. [Wiring into the vehicle](docs/wiring/wiring-guide.md)
-3. [Mosquitto MQTT broker setup with TLS](docs/setup/mosquitto-tls-setup.md)
+3. [MQTT broker setup (HiveMQ Cloud, free)](docs/setup/mosquitto-tls-setup.md)
 4. [Firmware configuration and flashing](docs/setup/firmware-setup.md)
 5. [Home Assistant configuration](docs/setup/homeassistant-setup.md)
+6. [Build, QEMU emulation, and testing](docs/setup/build-and-qemu.md)
+
+## Development
+
+### Running unit tests (no hardware needed)
+
+```bash
+cd firmware/test/
+make
+# 42 tests across 4 suites — all should pass
+```
+
+### AT command simulator
+
+Test the firmware connect flow without a real modem:
+
+```bash
+python3 tools/sim7600_simulator.py --interactive
+# or: python3 tools/sim7600_simulator.py  (creates a virtual serial port)
+```
+
+Simulator supports: `--no-fix`, `--no-lte`, `--gps-lat`, `--gps-lon`.
 
 ---
 

@@ -9,6 +9,12 @@ firmware/.cache/
 firmware/managed_components/
 firmware/dependencies.lock
 
+# Test binaries
+firmware/test/test_gnss
+firmware/test/test_power
+firmware/test/test_relay
+firmware/test/test_mqtt_json
+
 # Python
 __pycache__/
 *.py[cod]

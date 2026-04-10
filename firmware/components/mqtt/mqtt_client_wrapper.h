@@ -18,12 +18,15 @@
 #include "gnss.h"
 #include "power_monitor.h"
 
-// MQTT Topics
-#define TOPIC_LOCATION      "car/xsara/location"
-#define TOPIC_STATE         "car/xsara/state"
-#define TOPIC_POWER         "car/xsara/power"
-#define TOPIC_CMD_RELAY     "car/xsara/cmd/relay"
-#define TOPIC_RELAY_STATUS  "car/xsara/cmd/relay/status"
+// MQTT Topic prefix — set CONFIG_VEHICLE_ID in credentials.h (e.g. "myCar", "xsara", "truck1")
+// Resulting topics: car/<vehicle_id>/location, car/<vehicle_id>/cmd/relay, etc.
+#define _TOPIC(suffix)      "car/" CONFIG_VEHICLE_ID "/" suffix
+
+#define TOPIC_LOCATION      _TOPIC("location")
+#define TOPIC_STATE         _TOPIC("state")
+#define TOPIC_POWER         _TOPIC("power")
+#define TOPIC_CMD_RELAY     _TOPIC("cmd/relay")
+#define TOPIC_RELAY_STATUS  _TOPIC("cmd/relay/status")
 
 /**
  * Initialize MQTT client (load config, create client handle).
