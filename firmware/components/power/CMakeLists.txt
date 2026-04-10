@@ -1,5 +1,5 @@
 idf_component_register(
     SRCS "power_monitor.c"
     INCLUDE_DIRS "."
-    REQUIRES esp_adc esp_log
+    REQUIRES driver esp_adc esp_log
 )

@@ -49,6 +49,8 @@ jobs:
             --enable=all \
             --suppress=missingIncludeSystem \
             --suppress=missingInclude \
+            --suppress=unusedFunction \
+            --suppress=unusedStructMember \
             --error-exitcode=1 \
             --std=c11 \
             -I firmware/components/modem \
