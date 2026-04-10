@@ -1,0 +1,62 @@
+# Home Assistant configuration for Car LTE GPS Tracker
+# Add the relevant sections to your configuration.yaml
+
+# ─── MQTT Device Tracker ────────────────────────────────────────────────────
+device_tracker:
+  - platform: mqtt_json
+    devices:
+      xsara_picasso: "car/xsara/location"
+
+# ─── MQTT Sensors ───────────────────────────────────────────────────────────
+mqtt:
+  sensor:
+    - name: "Xsara Battery Voltage"
+      unique_id: xsara_battery_mv
+      state_topic: "car/xsara/power"
+      value_template: "{{ value_json.battery_mv }}"
+      unit_of_measurement: "mV"
+      device_class: voltage
+
+    - name: "Xsara Battery Percent"
+      unique_id: xsara_battery_pct
+      state_topic: "car/xsara/power"
+      value_template: "{{ value_json.battery_pct }}"
+      unit_of_measurement: "%"
+      device_class: battery
+
+    - name: "Xsara Power Source"
+      unique_id: xsara_power_source
+      state_topic: "car/xsara/power"
+      value_template: "{{ value_json.source }}"
+
+    - name: "Xsara Speed"
+      unique_id: xsara_speed
+      state_topic: "car/xsara/location"
+      value_template: "{{ value_json.speed }}"
+      unit_of_measurement: "km/h"
+      device_class: speed
+
+    - name: "Xsara GPS Satellites"
+      unique_id: xsara_satellites
+      state_topic: "car/xsara/location"
+      value_template: "{{ value_json.satellites }}"
+      unit_of_measurement: "sat"
+
+    - name: "Xsara Status"
+      unique_id: xsara_status
+      state_topic: "car/xsara/state"
+      value_template: "{{ value_json.status }}"
+
+  # ─── Relay Switch ──────────────────────────────────────────────────────────
+  switch:
+    - name: "Xsara Fuel Pump"
+      unique_id: xsara_fuel_pump
+      state_topic: "car/xsara/cmd/relay/status"
+      command_topic: "car/xsara/cmd/relay"
+      payload_on: "ON"
+      payload_off: "OFF"
+      state_on: "ON"
+      state_off: "OFF"
+      optimistic: false
+      retain: true
+      icon: mdi:gas-station

@@ -1,0 +1,41 @@
+# Lovelace dashboard card for Car LTE GPS Tracker
+# Add to your Lovelace UI as a manual card
+
+type: vertical-stack
+cards:
+  - type: map
+    title: Xsara Location
+    entities:
+      - device_tracker.xsara_picasso
+    hours_to_show: 2
+    aspect_ratio: "16:9"
+
+  - type: glance
+    title: Xsara Status
+    entities:
+      - entity: sensor.xsara_status
+        name: Status
+      - entity: sensor.xsara_speed
+        name: Speed
+      - entity: sensor.xsara_gps_satellites
+        name: Satellites
+      - entity: sensor.xsara_power_source
+        name: Power
+
+  - type: entities
+    title: Battery
+    entities:
+      - entity: sensor.xsara_battery_percent
+        name: Battery Level
+      - entity: sensor.xsara_battery_voltage
+        name: Voltage
+
+  - type: button
+    name: Fuel Pump Control
+    entity: switch.xsara_fuel_pump
+    tap_action:
+      action: toggle
+    hold_action:
+      action: more-info
+    show_state: true
+    icon: mdi:gas-station

@@ -1,0 +1,28 @@
+# Credentials — never commit these
+firmware/config/credentials.h
+
+# ESP-IDF build output
+firmware/build/
+firmware/sdkconfig
+firmware/sdkconfig.old
+firmware/.cache/
+firmware/managed_components/
+firmware/dependencies.lock
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
