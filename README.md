@@ -163,7 +163,7 @@ firmware/
 ### Build
 
 ```bash
-git clone https://github.com/molnard/car-lte-gps-tracker
+git clone https://github.com/CodeLizardDev/car-lte-gps-tracker
 cd car-lte-gps-tracker/firmware
 idf.py set-target esp32
 cp config/credentials.example.h config/credentials.h
