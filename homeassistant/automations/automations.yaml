@@ -15,13 +15,13 @@
     (no MQTT heartbeat received for 5 minutes).
   trigger:
     - platform: state
-      entity_id: sensor.xsara_status
+      entity_id: sensor.tracker_status
       to: "offline"
       for:
         minutes: 1
     - platform: template
       value_template: >
-        {{ (now() - states.sensor.xsara_status.last_updated).total_seconds() > 300 }}
+        {{ (now() - states.sensor.tracker_status.last_updated).total_seconds() > 300 }}
   condition: []
   action:
     - service: YOUR_NOTIFY_SERVICE
@@ -29,7 +29,7 @@
         title: "🚗 Car Tracker Offline"
         message: >
           The tracker has not been heard from for more than 5 minutes.
-          Last seen: {{ states.sensor.xsara_status.last_updated | relative_time }}.
+          Last seen: {{ states.sensor.tracker_status.last_updated | relative_time }}.
   mode: single
 
 # ── 2. Tracker back online ────────────────────────────────────────────────────
@@ -38,7 +38,7 @@
   description: Notifies when the tracker reconnects after being offline.
   trigger:
     - platform: state
-      entity_id: sensor.xsara_status
+      entity_id: sensor.tracker_status
       to: "online"
   condition:
     - condition: template
@@ -60,19 +60,19 @@
     Only fires when power source is 'battery' (not on car power).
   trigger:
     - platform: numeric_state
-      entity_id: sensor.xsara_battery_percent
+      entity_id: sensor.tracker_battery_percent
       below: 20
   condition:
     - condition: state
-      entity_id: sensor.xsara_power_source
+      entity_id: sensor.tracker_power_source
       state: "battery"
   action:
     - service: YOUR_NOTIFY_SERVICE
       data:
         title: "🔋 Tracker Battery Low"
         message: >
-          Backup battery is at {{ states('sensor.xsara_battery_percent') }}%
-          ({{ states('sensor.xsara_battery_voltage') }} mV).
+          Backup battery is at {{ states('sensor.tracker_battery_percent') }}%
+          ({{ states('sensor.tracker_battery_voltage') }} mV).
           The tracker is running on battery power only.
   mode: single
 
@@ -84,11 +84,11 @@
     At this level the tracker may shut down soon.
   trigger:
     - platform: numeric_state
-      entity_id: sensor.xsara_battery_percent
+      entity_id: sensor.tracker_battery_percent
       below: 5
   condition:
     - condition: state
-      entity_id: sensor.xsara_power_source
+      entity_id: sensor.tracker_power_source
       state: "battery"
   action:
     - service: YOUR_NOTIFY_SERVICE
@@ -96,7 +96,7 @@
         title: "⚠️ Tracker Battery Critical"
         message: >
           Backup battery is critically low at
-          {{ states('sensor.xsara_battery_percent') }}%.
+          {{ states('sensor.tracker_battery_percent') }}%.
           Tracker may go offline soon.
   mode: single
 
@@ -108,7 +108,7 @@
     Useful for audit trail of remote commands.
   trigger:
     - platform: state
-      entity_id: switch.xsara_fuel_pump
+      entity_id: switch.tracker_fuel_pump
   condition:
     - condition: template
       value_template: >
@@ -128,7 +128,7 @@
         message: >
           Relay {{ trigger.to_state.state | upper }}
           (was {{ trigger.from_state.state | upper }})
-        entity_id: switch.xsara_fuel_pump
+        entity_id: switch.tracker_fuel_pump
   mode: queued
   max: 5
 
@@ -139,7 +139,7 @@
     Notifies when car 12V power is restored after running on battery.
   trigger:
     - platform: state
-      entity_id: sensor.xsara_power_source
+      entity_id: sensor.tracker_power_source
       from: "battery"
       to: "car"
   action:

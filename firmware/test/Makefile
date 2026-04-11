@@ -10,16 +10,15 @@ LIBS    = -lm
 
 TESTS   = test_gnss test_power test_relay test_mqtt_json
 
-.PHONY: all test clean
-
-all: test
-
-test: $(TESTS)
-	@echo ""
-	@echo "========================================"
-	@echo "Running all unit tests..."
-	@echo "========================================"
-	@PASS=0; FAIL=0; \
+ifeq ($(OS),Windows_NT)
+EXE_SUFFIX = .exe
+TEST_BINS = $(addsuffix $(EXE_SUFFIX),$(TESTS))
+RUN_ALL = powershell -NoProfile -Command "$$pass=0; $$fail=0; Write-Host ''; Write-Host '========================================'; Write-Host 'Running all unit tests...'; Write-Host '========================================'; foreach ($$t in '$(TEST_BINS)'.Split(' ')) { $$exe = '.\' + $$t; & $$exe; if ($$LASTEXITCODE -eq 0) { $$pass++ } else { $$fail++ } }; Write-Host '========================================'; Write-Host ('Test suites: ' + ($$pass + $$fail) + ' total, ' + $$pass + ' passed, ' + $$fail + ' failed'); Write-Host '========================================'; if ($$fail -ne 0) { exit 1 }"
+RM_CMD = powershell -NoProfile -Command "$$paths = @('test_gnss','test_gnss.exe','test_power','test_power.exe','test_relay','test_relay.exe','test_mqtt_json','test_mqtt_json.exe'); Remove-Item -Path $$paths -Force -ErrorAction SilentlyContinue"
+else
+EXE_SUFFIX =
+TEST_BINS = $(TESTS)
+RUN_ALL = PASS=0; FAIL=0; \
 	for t in $(TESTS); do \
 	    ./$$t; \
 	    if [ $$? -eq 0 ]; then PASS=$$((PASS+1)); else FAIL=$$((FAIL+1)); fi; \
@@ -28,18 +27,27 @@ test: $(TESTS)
 	echo "Test suites: $$((PASS+FAIL)) total, $$PASS passed, $$FAIL failed"; \
 	echo "========================================"; \
 	[ $$FAIL -eq 0 ]
+RM_CMD = rm -f $(TESTS)
+endif
 
-test_gnss: test_gnss.c
+.PHONY: all test clean
+
+all: test
+
+test: $(TEST_BINS)
+	@$(RUN_ALL)
+
+test_gnss$(EXE_SUFFIX): test_gnss.c ../components/gnss/gnss_pure.c
+	$(CC) $(CFLAGS) -I../components/gnss -o $@ test_gnss.c ../components/gnss/gnss_pure.c $(LIBS)
+
+test_power$(EXE_SUFFIX): test_power.c
 	$(CC) $(CFLAGS) -o $@ $< $(LIBS)
 
-test_power: test_power.c
-	$(CC) $(CFLAGS) -o $@ $< $(LIBS)
-
-test_relay: test_relay.c
+test_relay$(EXE_SUFFIX): test_relay.c
 	$(CC) $(CFLAGS) -o $@ $<
 
-test_mqtt_json: test_mqtt_json.c
-	$(CC) $(CFLAGS) -o $@ $< $(LIBS)
+test_mqtt_json$(EXE_SUFFIX): test_mqtt_json.c ../components/mqtt/mqtt_payloads.c
+	$(CC) $(CFLAGS) -I../components/mqtt -I../components/gnss -I../components/power -o $@ test_mqtt_json.c ../components/mqtt/mqtt_payloads.c $(LIBS)
 
 clean:
-	rm -f $(TESTS)
+	@$(RM_CMD)

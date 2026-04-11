@@ -100,7 +100,7 @@ mqtt:
 
 Install [MQTT Explorer](https://mqtt-explorer.com/) on your PC and connect
 to the HiveMQ cluster with the same credentials. You should see topics
-appear under `car/xsara/` once the tracker is running.
+appear under `car/my-car/` once the tracker is running.
 
 ```
 Host:     abc123.s1.eu.hivemq.cloud
@@ -116,8 +116,8 @@ Password: ••••••••
 
 | Topic | Direction | Description |
 |---|---|---|
-| `car/xsara/location` | Tracker → HA | GPS position JSON |
-| `car/xsara/state` | Tracker → HA | Online/offline status |
-| `car/xsara/power` | Tracker → HA | Battery voltage & source |
-| `car/xsara/cmd/relay` | HA → Tracker | `ON` or `OFF` command |
-| `car/xsara/cmd/relay/status` | Tracker → HA | Relay state confirmation |
+| `car/my-car/location` | Tracker → HA | GPS position JSON |
+| `car/my-car/state` | Tracker → HA | Online heartbeat status |
+| `car/my-car/power` | Tracker → HA | Battery voltage & source |
+| `car/my-car/cmd/relay` | HA → Tracker | `ON` or `OFF` command |
+| `car/my-car/cmd/relay/status` | Tracker → HA | Relay state confirmation |

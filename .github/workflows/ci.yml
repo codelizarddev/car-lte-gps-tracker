@@ -90,6 +90,7 @@ jobs:
           #define CONFIG_MQTT_PASS    "ci"
           #define CONFIG_MQTT_CA_CERT  NULL
           #define CONFIG_GNSS_PUBLISH_INTERVAL_S  10
+          #define CONFIG_STATE_PUBLISH_INTERVAL_S 60
           #define CONFIG_POWER_PUBLISH_INTERVAL_S 30
           EOF
 

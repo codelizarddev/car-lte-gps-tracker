@@ -7,14 +7,15 @@
  */
 
 #include "mqtt_client_wrapper.h"
+#include "mqtt_payloads.h"
 #include "relay.h"
 #include "esp_log.h"
 #include "mqtt_client.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/event_groups.h"
+#include <stdbool.h>
 #include <string.h>
 #include <stdio.h>
-#include <time.h>
 
 #include "credentials.h"
 
@@ -26,24 +27,45 @@ static EventGroupHandle_t       mqtt_events = NULL;
 #define MQTT_CONNECTED_BIT  BIT0
 #define MQTT_CONNECT_TIMEOUT_MS  30000
 
+static bool topic_matches(const char *topic, int topic_len, const char *expected)
+{
+    size_t expected_len = strlen(expected);
+    return topic_len == (int)expected_len &&
+           strncmp(topic, expected, expected_len) == 0;
+}
+
+static bool payload_equals_trimmed(const char *payload, int len, const char *expected)
+{
+    size_t expected_len = strlen(expected);
+
+    while (len > 0 && (*payload == ' ' || *payload == '\r' || *payload == '\n' || *payload == '\t')) {
+        payload++;
+        len--;
+    }
+
+    while (len > 0) {
+        char c = payload[len - 1];
+        if (c != ' ' && c != '\r' && c != '\n' && c != '\t') break;
+        len--;
+    }
+
+    return len == (int)expected_len && strncmp(payload, expected, expected_len) == 0;
+}
+
 // ─── Event handler ────────────────────────────────────────────────────────────
 
 static void on_relay_command(const char *payload, int len)
 {
-    char cmd[8] = {0};
-    if (len >= (int)sizeof(cmd)) len = sizeof(cmd) - 1;
-    strncpy(cmd, payload, len);
+    ESP_LOGI(TAG, "Relay command received (%d bytes)", len);
 
-    ESP_LOGI(TAG, "Relay command received: %s", cmd);
-
-    if (strncmp(cmd, "OFF", 3) == 0) {
+    if (payload_equals_trimmed(payload, len, "OFF")) {
         relay_set(RELAY_OPEN);
         mqtt_publish_relay_status("OFF");
-    } else if (strncmp(cmd, "ON", 2) == 0) {
+    } else if (payload_equals_trimmed(payload, len, "ON")) {
         relay_set(RELAY_CLOSED);
         mqtt_publish_relay_status("ON");
     } else {
-        ESP_LOGW(TAG, "Unknown relay command: %s", cmd);
+        ESP_LOGW(TAG, "Unknown relay command payload");
     }
 }
 
@@ -66,8 +88,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base,
         break;
 
     case MQTT_EVENT_DATA:
-        if (event->topic_len > 0 &&
-            strncmp(event->topic, TOPIC_CMD_RELAY, event->topic_len) == 0) {
+        if (event->topic_len > 0 && topic_matches(event->topic, event->topic_len, TOPIC_CMD_RELAY)) {
             on_relay_command(event->data, event->data_len);
         }
         break;
@@ -158,15 +179,7 @@ void mqtt_publish_location(const gnss_data_t *loc)
     if (!loc || !loc->valid) return;
 
     char payload[256];
-    snprintf(payload, sizeof(payload),
-             "{\"lat\":%.6f,\"lon\":%.6f,\"alt\":%.1f,"
-             "\"speed\":%.1f,\"course\":%.1f,"
-             "\"satellites\":%u,\"hdop\":%.1f,"
-             "\"date\":\"%s\",\"time\":\"%s\"}",
-             loc->latitude, loc->longitude, loc->altitude,
-             loc->speed, loc->course,
-             loc->satellites, loc->hdop,
-             loc->date, loc->utc_time);
+    mqtt_build_location_json(loc, payload, sizeof(payload));
 
     esp_mqtt_client_publish(client, TOPIC_LOCATION, payload, 0, 0, 0);
 }
@@ -174,7 +187,7 @@ void mqtt_publish_location(const gnss_data_t *loc)
 void mqtt_publish_state(const char *state)
 {
     char payload[64];
-    snprintf(payload, sizeof(payload), "{\"status\":\"%s\"}", state);
+    mqtt_build_state_json(state, payload, sizeof(payload));
     esp_mqtt_client_publish(client, TOPIC_STATE, payload, 0, 1, 1);
 }
 
@@ -183,11 +196,7 @@ void mqtt_publish_power(const power_data_t *pwr)
     if (!pwr) return;
 
     char payload[128];
-    snprintf(payload, sizeof(payload),
-             "{\"source\":\"%s\",\"battery_mv\":%lu,\"battery_pct\":%u}",
-             (pwr->source == POWER_SOURCE_CAR) ? "car" : "battery",
-             pwr->battery_mv,
-             pwr->battery_pct);
+    mqtt_build_power_json(pwr, payload, sizeof(payload));
 
     esp_mqtt_client_publish(client, TOPIC_POWER, payload, 0, 0, 0);
 }

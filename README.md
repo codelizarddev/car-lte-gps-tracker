@@ -76,11 +76,11 @@ See [`docs/wiring/wiring-guide.md`](docs/wiring/wiring-guide.md) for detailed wi
 
 | Topic | Direction | Payload | Description |
 |---|---|---|---|
-| `car/xsara/location` | Publish | JSON | GPS position, speed, heading |
-| `car/xsara/state` | Publish | JSON | System state, uptime |
-| `car/xsara/power` | Publish | JSON | Battery voltage, power source |
-| `car/xsara/cmd/relay` | Subscribe | `ON` / `OFF` | Relay control command |
-| `car/xsara/cmd/relay/status` | Publish | `ON` / `OFF` | Relay state confirmation |
+| `car/<vehicle-id>/location` | Publish | JSON | GPS position and telemetry |
+| `car/<vehicle-id>/state` | Publish | JSON | System status heartbeat |
+| `car/<vehicle-id>/power` | Publish | JSON | Battery voltage, percent, power source |
+| `car/<vehicle-id>/cmd/relay` | Subscribe | `ON` / `OFF` | Relay control command |
+| `car/<vehicle-id>/cmd/relay/status` | Publish | `ON` / `OFF` | Relay state confirmation |
 
 ### Location payload example
 
@@ -88,11 +88,13 @@ See [`docs/wiring/wiring-guide.md`](docs/wiring/wiring-guide.md) for detailed wi
 {
   "lat": 47.4979,
   "lon": 19.0402,
+  "alt": 108.4,
   "speed": 0.0,
-  "heading": 0.0,
-  "satellites": 8,
-  "hdop": 1.2,
-  "timestamp": "2026-04-10T12:00:00Z"
+  "course": 0.0,
+  "satellites": 0,
+  "hdop": 0.0,
+  "date": "100426",
+  "time": "120000.0"
 }
 ```
 
@@ -206,6 +208,14 @@ make
 # 42 tests across 4 suites — all should pass
 ```
 
+Windows (WinLibs via `winget`):
+
+```powershell
+winget install --id BrechtSanders.WinLibs.POSIX.UCRT --exact
+cd firmware\test
+mingw32-make
+```
+
 ### AT command simulator
 
 Test the firmware connect flow without a real modem:
@@ -221,7 +231,7 @@ Simulator supports: `--no-fix`, `--no-lte`, `--gps-lat`, `--gps-lon`.
 
 ## Target Vehicle
 
-Developed and tested on a **Citroën Xsara Picasso (2003)**, but the design is generic and applicable to most 12V vehicles.
+Developed on a 12V passenger vehicle platform during prototyping, but the design is intended to remain generic and applicable to most 12V vehicles.
 
 ---
 

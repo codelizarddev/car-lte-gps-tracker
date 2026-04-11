@@ -23,7 +23,7 @@ static const char *TAG = "MAIN";
 
 // Task handles
 static TaskHandle_t gnss_task_handle     = NULL;
-static TaskHandle_t mqtt_task_handle     = NULL;
+static TaskHandle_t state_task_handle    = NULL;
 static TaskHandle_t power_task_handle    = NULL;
 
 /**
@@ -52,6 +52,17 @@ static void power_task(void *pvParameters)
         power_monitor_read(&pwr);
         mqtt_publish_power(&pwr);
         vTaskDelay(pdMS_TO_TICKS(CONFIG_POWER_PUBLISH_INTERVAL_S * 1000));
+    }
+}
+
+/**
+ * State heartbeat task — republishes online state so monitoring can detect stale devices
+ */
+static void state_task(void *pvParameters)
+{
+    while (1) {
+        mqtt_publish_state("online");
+        vTaskDelay(pdMS_TO_TICKS(CONFIG_STATE_PUBLISH_INTERVAL_S * 1000));
     }
 }
 
@@ -97,6 +108,7 @@ void app_main(void)
 
     // Start background tasks
     xTaskCreate(gnss_task,  "gnss_task",  4096, NULL, 5, &gnss_task_handle);
+    xTaskCreate(state_task, "state_task", 2048, NULL, 2, &state_task_handle);
     xTaskCreate(power_task, "power_task", 2048, NULL, 3, &power_task_handle);
 
     ESP_LOGI(TAG, "System ready.");

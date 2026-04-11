@@ -5,11 +5,11 @@
  * Credentials and server address are loaded from credentials.h (not committed to git).
  *
  * Topic structure:
- *   car/xsara/location         — GPS position JSON (published)
- *   car/xsara/state            — System state JSON (published)
- *   car/xsara/power            — Battery/power JSON (published)
- *   car/xsara/cmd/relay        — Relay command ON/OFF (subscribed)
- *   car/xsara/cmd/relay/status — Relay state confirmation (published)
+ *   car/my-car/location         — GPS position JSON (published)
+ *   car/my-car/state            — System state JSON (published)
+ *   car/my-car/power            — Battery/power JSON (published)
+ *   car/my-car/cmd/relay        — Relay command ON/OFF (subscribed)
+ *   car/my-car/cmd/relay/status — Relay state confirmation (published)
  */
 
 #pragma once
@@ -18,7 +18,7 @@
 #include "gnss.h"
 #include "power_monitor.h"
 
-// MQTT Topic prefix — set CONFIG_VEHICLE_ID in credentials.h (e.g. "myCar", "xsara", "truck1")
+// MQTT Topic prefix — set CONFIG_VEHICLE_ID in credentials.h (e.g. "my-car", "truck-1")
 // Resulting topics: car/<vehicle_id>/location, car/<vehicle_id>/cmd/relay, etc.
 #define _TOPIC(suffix)      "car/" CONFIG_VEHICLE_ID "/" suffix
 

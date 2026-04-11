@@ -32,4 +32,5 @@
 
 // ─── Timing ─────────────────────────────────────────────────────────────────
 #define CONFIG_GNSS_PUBLISH_INTERVAL_S   10   // Publish GPS every N seconds
+#define CONFIG_STATE_PUBLISH_INTERVAL_S  60   // Publish online heartbeat every N seconds
 #define CONFIG_POWER_PUBLISH_INTERVAL_S  30   // Publish battery every N seconds

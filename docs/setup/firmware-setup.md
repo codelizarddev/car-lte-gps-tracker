@@ -37,7 +37,7 @@ cp config/credentials.example.h config/credentials.h
 Edit `config/credentials.h`:
 
 ```c
-#define CONFIG_VEHICLE_ID   "xsara"          // Your vehicle ID (used in MQTT topics)
+#define CONFIG_VEHICLE_ID   "my-car"         // Your vehicle ID (used in MQTT topics)
 #define CONFIG_SIM_APN      "internet"       // One.hu APN
 #define CONFIG_MQTT_HOST    "abc.hivemq.cloud"
 #define CONFIG_MQTT_PORT    8883
@@ -45,6 +45,7 @@ Edit `config/credentials.h`:
 #define CONFIG_MQTT_PASS    "your-password"
 #define CONFIG_MQTT_CA_CERT  NULL            // Use system root CAs (works with HiveMQ)
 #define CONFIG_GNSS_PUBLISH_INTERVAL_S   10
+#define CONFIG_STATE_PUBLISH_INTERVAL_S  60
 #define CONFIG_POWER_PUBLISH_INTERVAL_S  30
 ```
 
@@ -97,7 +98,7 @@ I (xxx) MODEM: Network registered
 I (xxx) MODEM: LTE connected: +CGPADDR: 1,10.x.x.x
 I (xxx) GNSS: GNSS started
 I (xxx) MQTT: Connected to broker
-I (xxx) MQTT: Subscribed to car/xsara/cmd/relay
+I (xxx) MQTT: Subscribed to car/my-car/cmd/relay
 I (xxx) MAIN: System ready.
 ```
 
@@ -135,3 +136,16 @@ make
 ```
 
 All 42 tests should pass in under 1 second.
+
+On Windows you can install a GCC + Make toolchain with `winget`:
+
+```powershell
+winget install --id BrechtSanders.WinLibs.POSIX.UCRT --exact
+```
+
+Then open a new terminal and run:
+
+```powershell
+cd firmware\test
+mingw32-make
+```

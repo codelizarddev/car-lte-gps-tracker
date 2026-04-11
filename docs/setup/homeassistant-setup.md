@@ -43,16 +43,17 @@ mqtt_password: your-strong-password
 
 Copy the contents of `homeassistant/configuration.yaml` into your HA `configuration.yaml`
 and restart HA.
+Replace `my-car` in the sample topics with the same `CONFIG_VEHICLE_ID` value you use in the firmware.
 
 This creates:
-- `device_tracker.xsara_picasso` — GPS location
-- `sensor.xsara_battery_percent` — battery %
-- `sensor.xsara_battery_voltage` — battery mV
-- `sensor.xsara_power_source` — `car` or `battery`
-- `sensor.xsara_speed` — speed km/h
-- `sensor.xsara_gps_satellites` — satellite count
-- `sensor.xsara_status` — `online` / `offline`
-- `switch.xsara_fuel_pump` — relay control
+- `device_tracker.car_tracker` — GPS location
+- `sensor.tracker_battery_percent` — battery %
+- `sensor.tracker_battery_voltage` — battery mV
+- `sensor.tracker_power_source` — `car` or `battery`
+- `sensor.tracker_speed` — speed km/h
+- `sensor.tracker_gps_satellites` — satellite count
+- `sensor.tracker_status` — `online` / `offline`
+- `switch.tracker_fuel_pump` — relay control
 
 ---
 
@@ -95,15 +96,15 @@ The dashboard includes:
 
 Once the tracker is running and connected, you should see:
 
-1. `sensor.xsara_status` → `online`
-2. `device_tracker.xsara_picasso` → shows location on map
-3. `sensor.xsara_battery_percent` → some value
+1. `sensor.tracker_status` → `online`
+2. `device_tracker.car_tracker` → shows location on map
+3. `sensor.tracker_battery_percent` → some value
 
 To test the relay from HA Developer Tools → Services:
 ```yaml
 service: switch.turn_off
 target:
-  entity_id: switch.xsara_fuel_pump
+  entity_id: switch.tracker_fuel_pump
 ```
 
-The tracker will respond with a confirmation on `car/xsara/cmd/relay/status`.
+The tracker will respond with a confirmation on `car/my-car/cmd/relay/status`.

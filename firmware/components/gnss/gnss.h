@@ -13,22 +13,7 @@
 
 #pragma once
 
-#include "esp_err.h"
-#include <stdbool.h>
-#include <stdint.h>
-
-typedef struct {
-    double  latitude;       // Decimal degrees, positive = North
-    double  longitude;      // Decimal degrees, positive = East
-    float   altitude;       // Meters above sea level
-    float   speed;          // Speed over ground, km/h
-    float   course;         // Course over ground, degrees (0–360)
-    uint8_t satellites;     // Number of satellites in use
-    float   hdop;           // Horizontal dilution of precision
-    bool    valid;          // Fix is valid
-    char    utc_time[16];   // UTC time string "HHMMSS.S"
-    char    date[8];        // Date string "DDMMYY"
-} gnss_data_t;
+#include "gnss_pure.h"
 
 /**
  * Initialize GNSS subsystem (starts modem GNSS via AT+CGPS).
@@ -42,22 +27,3 @@ esp_err_t gnss_init(void);
  * @return ESP_OK if valid fix obtained, ESP_ERR_NOT_FOUND if no fix yet
  */
 esp_err_t gnss_get_location(gnss_data_t *out);
-
-/**
- * Parse a raw AT+CGPSINFO response string into a gnss_data_t.
- * Exposed for unit testing.
- *
- * @param response  Raw modem response string
- * @param out       Output struct
- * @return ESP_OK on successful parse, ESP_FAIL if format invalid or no fix
- */
-esp_err_t gnss_parse_cgpsinfo(const char *response, gnss_data_t *out);
-
-/**
- * Convert DDDMM.MMMMMM coordinate to decimal degrees.
- * Exposed for unit testing.
- *
- * @param raw   Value in DDDMM.MMMMMM format
- * @return Decimal degrees
- */
-double gnss_nmea_to_decimal(double raw);

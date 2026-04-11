@@ -4,65 +4,14 @@
  * Tests that JSON payloads are well-formed and contain correct values.
  *
  * Build & run:
- *   gcc -o test_mqtt_json test_mqtt_json.c -lm
+ *   gcc -o test_mqtt_json test_mqtt_json.c ../components/mqtt/mqtt_payloads.c \
+ *       -lm -I../components/mqtt -I../components/gnss -I../components/power
  */
 
 #include <stdio.h>
 #include <string.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <math.h>
 
-// ── Minimal type definitions ──────────────────────────────────────────────────
-
-typedef struct {
-    double  latitude;
-    double  longitude;
-    float   altitude;
-    float   speed;
-    float   course;
-    uint8_t satellites;
-    float   hdop;
-    bool    valid;
-    char    utc_time[16];
-    char    date[8];
-} gnss_data_t;
-
-typedef enum { POWER_SOURCE_CAR = 0, POWER_SOURCE_BATTERY = 1 } power_source_t;
-typedef struct {
-    uint32_t       battery_mv;
-    uint8_t        battery_pct;
-    power_source_t source;
-} power_data_t;
-
-// ── Pure JSON builders (mirrors mqtt_client_wrapper.c logic) ──────────────────
-
-static int build_location_json(const gnss_data_t *loc, char *buf, size_t len)
-{
-    return snprintf(buf, len,
-        "{\"lat\":%.6f,\"lon\":%.6f,\"alt\":%.1f,"
-        "\"speed\":%.1f,\"course\":%.1f,"
-        "\"satellites\":%u,\"hdop\":%.1f,"
-        "\"date\":\"%s\",\"time\":\"%s\"}",
-        loc->latitude, loc->longitude, loc->altitude,
-        loc->speed, loc->course,
-        loc->satellites, loc->hdop,
-        loc->date, loc->utc_time);
-}
-
-static int build_power_json(const power_data_t *pwr, char *buf, size_t len)
-{
-    return snprintf(buf, len,
-        "{\"source\":\"%s\",\"battery_mv\":%lu,\"battery_pct\":%u}",
-        (pwr->source == POWER_SOURCE_CAR) ? "car" : "battery",
-        (unsigned long)pwr->battery_mv,
-        pwr->battery_pct);
-}
-
-static int build_state_json(const char *state, char *buf, size_t len)
-{
-    return snprintf(buf, len, "{\"status\":\"%s\"}", state);
-}
+#include "../components/mqtt/mqtt_payloads.h"
 
 // ── Test framework ────────────────────────────────────────────────────────────
 static int tests_run = 0, tests_passed = 0, tests_failed = 0;
@@ -99,7 +48,7 @@ static void test_location_json_has_required_fields(void)
     strcpy(loc.utc_time, "120000.0");
 
     char buf[256];
-    build_location_json(&loc, buf, sizeof(buf));
+    mqtt_build_location_json(&loc, buf, sizeof(buf));
 
     ASSERT_HAS(buf, "\"lat\":");
     ASSERT_HAS(buf, "\"lon\":");
@@ -129,7 +78,7 @@ static void test_location_json_correct_values(void)
     strcpy(loc.utc_time, "120000.0");
 
     char buf[256];
-    build_location_json(&loc, buf, sizeof(buf));
+    mqtt_build_location_json(&loc, buf, sizeof(buf));
 
     ASSERT_HAS(buf, "47.499144");
     ASSERT_HAS(buf, "19.040840");
@@ -145,7 +94,7 @@ static void test_location_json_starts_and_ends_with_braces(void)
     strcpy(loc.date, "000000");
     strcpy(loc.utc_time, "000000.0");
     char buf[256];
-    build_location_json(&loc, buf, sizeof(buf));
+    mqtt_build_location_json(&loc, buf, sizeof(buf));
     ASSERT_TRUE(buf[0] == '{');
     ASSERT_TRUE(buf[strlen(buf) - 1] == '}');
     PASS();
@@ -157,7 +106,7 @@ static void test_power_json_car_source(void)
 {
     power_data_t pwr = { .battery_mv = 4150, .battery_pct = 90, .source = POWER_SOURCE_CAR };
     char buf[128];
-    build_power_json(&pwr, buf, sizeof(buf));
+    mqtt_build_power_json(&pwr, buf, sizeof(buf));
     ASSERT_HAS(buf, "\"source\":\"car\"");
     ASSERT_HAS(buf, "\"battery_mv\":4150");
     ASSERT_HAS(buf, "\"battery_pct\":90");
@@ -168,7 +117,7 @@ static void test_power_json_battery_source(void)
 {
     power_data_t pwr = { .battery_mv = 3700, .battery_pct = 55, .source = POWER_SOURCE_BATTERY };
     char buf[128];
-    build_power_json(&pwr, buf, sizeof(buf));
+    mqtt_build_power_json(&pwr, buf, sizeof(buf));
     ASSERT_HAS(buf, "\"source\":\"battery\"");
     ASSERT_HAS(buf, "\"battery_mv\":3700");
     PASS();
@@ -178,7 +127,7 @@ static void test_power_json_zero_battery(void)
 {
     power_data_t pwr = { .battery_mv = 3000, .battery_pct = 0, .source = POWER_SOURCE_BATTERY };
     char buf[128];
-    build_power_json(&pwr, buf, sizeof(buf));
+    mqtt_build_power_json(&pwr, buf, sizeof(buf));
     ASSERT_HAS(buf, "\"battery_pct\":0");
     PASS();
 }
@@ -188,7 +137,7 @@ static void test_power_json_zero_battery(void)
 static void test_state_json_online(void)
 {
     char buf[64];
-    build_state_json("online", buf, sizeof(buf));
+    mqtt_build_state_json("online", buf, sizeof(buf));
     ASSERT_HAS(buf, "\"status\":\"online\"");
     PASS();
 }
@@ -196,7 +145,7 @@ static void test_state_json_online(void)
 static void test_state_json_offline(void)
 {
     char buf[64];
-    build_state_json("offline", buf, sizeof(buf));
+    mqtt_build_state_json("offline", buf, sizeof(buf));
     ASSERT_HAS(buf, "\"status\":\"offline\"");
     PASS();
 }

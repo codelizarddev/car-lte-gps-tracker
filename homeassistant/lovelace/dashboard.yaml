@@ -8,7 +8,7 @@ cards:
   - type: map
     title: Car Location
     entities:
-      - device_tracker.xsara_picasso
+      - device_tracker.car_tracker
     hours_to_show: 2
     aspect_ratio: "16:9"
     default_zoom: 15
@@ -18,16 +18,16 @@ cards:
     title: Tracker Status
     show_state: true
     entities:
-      - entity: sensor.xsara_status
+      - entity: sensor.tracker_status
         name: Status
         icon: mdi:car-connected
-      - entity: sensor.xsara_speed
+      - entity: sensor.tracker_speed
         name: Speed
         icon: mdi:speedometer
-      - entity: sensor.xsara_gps_satellites
+      - entity: sensor.tracker_gps_satellites
         name: Satellites
         icon: mdi:satellite-variant
-      - entity: sensor.xsara_power_source
+      - entity: sensor.tracker_power_source
         name: Power
         icon: mdi:power-plug
 
@@ -36,10 +36,10 @@ cards:
     title: Battery
     entities:
       - type: custom:mushroom-entity-card
-        entity: sensor.xsara_battery_percent
+        entity: sensor.tracker_battery_percent
         name: Backup Battery
         icon: mdi:battery
-      - entity: sensor.xsara_battery_voltage
+      - entity: sensor.tracker_battery_voltage
         name: Voltage (mV)
         icon: mdi:flash
 
@@ -47,7 +47,7 @@ cards:
   - type: entities
     title: Remote Control
     entities:
-      - entity: switch.xsara_fuel_pump
+      - entity: switch.tracker_fuel_pump
         name: Fuel Pump
         icon: mdi:gas-station
         secondary_info: last-changed
@@ -60,7 +60,7 @@ cards:
       action: call-service
       service: switch.turn_off
       target:
-        entity_id: switch.xsara_fuel_pump
+        entity_id: switch.tracker_fuel_pump
       confirmation:
         text: >
           This will cut fuel to the engine.
@@ -74,5 +74,5 @@ cards:
     title: Battery (last 24h)
     hours_to_show: 24
     entities:
-      - entity: sensor.xsara_battery_percent
+      - entity: sensor.tracker_battery_percent
         name: Battery %

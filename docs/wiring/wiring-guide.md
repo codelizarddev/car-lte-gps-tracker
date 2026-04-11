@@ -2,7 +2,7 @@
 
 Complete wiring instructions for installing the Car LTE GPS Tracker in a vehicle.
 
-> Tested on Citroën Xsara Picasso (2003). Concepts apply to most 12V vehicles.
+> Prototyped on a real 12V vehicle. The wiring concepts apply to most 12V vehicles.
 
 ---
 
@@ -85,7 +85,7 @@ ECU fuel pump trigger signal
       Vehicle fuel pump relay coil (pin 85 or 86)
 ```
 
-### Finding the correct wire (Citroën Xsara Picasso 2003)
+### Finding the correct wire on your vehicle
 
 1. Locate the engine fuse/relay box in the engine bay
 2. Find the fuel pump relay (consult the owner's manual or fuse box lid diagram)
@@ -110,6 +110,7 @@ ECU fuel pump trigger signal
 ```
 
 The voltage divider scales 4.2V → 2.89V, safely within the ESP32 ADC range (3.3V max).
+On the LILYGO T-SIM7600 this measurement input is wired to GPIO35.
 
 ---
 
