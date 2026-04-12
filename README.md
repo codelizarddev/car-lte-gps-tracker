@@ -158,7 +158,7 @@ firmware/
 └── components/
     ├── modem/              # SIM7600 AT command driver
     ├── gnss/               # NMEA parser, location data
-    ├── mqtt/               # MQTT client, topic handlers
+    ├── mqtt_wrapper/       # MQTT client wrapper, topic handlers
     ├── relay/              # Relay GPIO control
     └── power/              # ADC battery monitor, power source detection
 ```

@@ -46,8 +46,8 @@ test_power$(EXE_SUFFIX): test_power.c
 test_relay$(EXE_SUFFIX): test_relay.c
 	$(CC) $(CFLAGS) -o $@ $<
 
-test_mqtt_json$(EXE_SUFFIX): test_mqtt_json.c ../components/mqtt/mqtt_payloads.c
-	$(CC) $(CFLAGS) -I../components/mqtt -I../components/gnss -I../components/power -o $@ test_mqtt_json.c ../components/mqtt/mqtt_payloads.c $(LIBS)
+test_mqtt_json$(EXE_SUFFIX): test_mqtt_json.c ../components/mqtt_wrapper/mqtt_payloads.c
+	$(CC) $(CFLAGS) -I../components/mqtt_wrapper -I../components/gnss -I../components/power -o $@ test_mqtt_json.c ../components/mqtt_wrapper/mqtt_payloads.c $(LIBS)
 
 clean:
 	@$(RM_CMD)

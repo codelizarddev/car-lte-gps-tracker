@@ -57,7 +57,7 @@ jobs:
             -I firmware/components/gnss \
             -I firmware/components/relay \
             -I firmware/components/power \
-            -I firmware/components/mqtt \
+            -I firmware/components/mqtt_wrapper \
             firmware/components/gnss/gnss.c \
             firmware/components/relay/relay.c \
             firmware/components/power/power_monitor.c \

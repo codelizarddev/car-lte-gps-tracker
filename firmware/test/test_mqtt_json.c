@@ -4,14 +4,14 @@
  * Tests that JSON payloads are well-formed and contain correct values.
  *
  * Build & run:
- *   gcc -o test_mqtt_json test_mqtt_json.c ../components/mqtt/mqtt_payloads.c \
- *       -lm -I../components/mqtt -I../components/gnss -I../components/power
+ *   gcc -o test_mqtt_json test_mqtt_json.c ../components/mqtt_wrapper/mqtt_payloads.c \
+ *       -lm -I../components/mqtt_wrapper -I../components/gnss -I../components/power
  */
 
 #include <stdio.h>
 #include <string.h>
 
-#include "../components/mqtt/mqtt_payloads.h"
+#include "../components/mqtt_wrapper/mqtt_payloads.h"
 
 // ── Test framework ────────────────────────────────────────────────────────────
 static int tests_run = 0, tests_passed = 0, tests_failed = 0;

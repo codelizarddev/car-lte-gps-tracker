@@ -4,7 +4,7 @@ idf_component_register(
     REQUIRES
         modem
         gnss
-        mqtt
+        mqtt_wrapper
         relay
         power_monitor
         nvs_flash
