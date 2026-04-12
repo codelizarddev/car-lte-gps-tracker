@@ -124,7 +124,6 @@ Invoke-Step "cppcheck" {
             --suppress=missingInclude `
             --suppress=unusedFunction `
             --suppress=unusedStructMember `
-            --suppress=normalCheckLevelMaxBranches `
             --suppress=checkersReport `
             --error-exitcode=1 `
             --std=c11 `
