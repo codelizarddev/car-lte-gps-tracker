@@ -1,5 +1,6 @@
 idf_component_register(
     SRCS "mqtt_client_wrapper.c" "mqtt_payloads.c"
     INCLUDE_DIRS "."
-    REQUIRES mqtt relay gnss power_monitor driver log freertos
+    PRIV_INCLUDE_DIRS "../../config"
+    REQUIRES mqtt relay gnss power driver log freertos
 )

@@ -18,6 +18,7 @@
 #include "mqtt_client_wrapper.h"
 #include "relay.h"
 #include "power_monitor.h"
+#include "credentials.h"
 
 static const char *TAG = "MAIN";
 

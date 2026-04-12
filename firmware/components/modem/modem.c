@@ -21,7 +21,7 @@ static const char *TAG = "MODEM";
 
 // ─── Internal helpers ────────────────────────────────────────────────────────
 
-static void uart_flush(void)
+static void modem_uart_flush(void)
 {
     uart_flush_input(MODEM_UART_NUM);
 }
@@ -45,7 +45,7 @@ esp_err_t modem_at_cmd(const char *cmd, const char *expected,
                         char *resp_buf, size_t resp_len,
                         uint32_t timeout_ms)
 {
-    uart_flush();
+    modem_uart_flush();
 
     // Send command with CR+LF
     char full_cmd[256];

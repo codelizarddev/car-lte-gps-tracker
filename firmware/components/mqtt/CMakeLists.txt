@@ -1,5 +1,3 @@
-idf_component_register(
-    SRCS "mqtt_client_wrapper.c" "mqtt_payloads.c"
-    INCLUDE_DIRS "."
-    REQUIRES mqtt relay gnss power_monitor driver log freertos
-)
+# Legacy path kept only so old links do not break.
+# The active ESP-IDF component lives in ../mqtt_wrapper to avoid colliding with
+# the built-in `mqtt` component name.

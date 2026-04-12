@@ -14,7 +14,7 @@ ifeq ($(OS),Windows_NT)
 EXE_SUFFIX = .exe
 TEST_BINS = $(addsuffix $(EXE_SUFFIX),$(TESTS))
 RUN_ALL = powershell -NoProfile -Command "$$pass=0; $$fail=0; Write-Host ''; Write-Host '========================================'; Write-Host 'Running all unit tests...'; Write-Host '========================================'; foreach ($$t in '$(TEST_BINS)'.Split(' ')) { $$exe = '.\' + $$t; & $$exe; if ($$LASTEXITCODE -eq 0) { $$pass++ } else { $$fail++ } }; Write-Host '========================================'; Write-Host ('Test suites: ' + ($$pass + $$fail) + ' total, ' + $$pass + ' passed, ' + $$fail + ' failed'); Write-Host '========================================'; if ($$fail -ne 0) { exit 1 }"
-RM_CMD = powershell -NoProfile -Command "$$paths = @('test_gnss','test_gnss.exe','test_power','test_power.exe','test_relay','test_relay.exe','test_mqtt_json','test_mqtt_json.exe'); Remove-Item -Path $$paths -Force -ErrorAction SilentlyContinue"
+RM_CMD = powershell -NoProfile -Command "$$paths = @('test_gnss','test_gnss.exe','test_power','test_power.exe','test_relay','test_relay.exe','test_mqtt_json','test_mqtt_json.exe'); foreach ($$p in $$paths) { if (Test-Path $$p) { Remove-Item -LiteralPath $$p -Force } }"
 else
 EXE_SUFFIX =
 TEST_BINS = $(TESTS)
@@ -50,4 +50,4 @@ test_mqtt_json$(EXE_SUFFIX): test_mqtt_json.c ../components/mqtt_wrapper/mqtt_pa
 	$(CC) $(CFLAGS) -I../components/mqtt_wrapper -I../components/gnss -I../components/power -o $@ test_mqtt_json.c ../components/mqtt_wrapper/mqtt_payloads.c $(LIBS)
 
 clean:
-	@$(RM_CMD)
+	-@$(RM_CMD)
